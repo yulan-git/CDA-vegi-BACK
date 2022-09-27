@@ -33,7 +33,6 @@ public class Recipe {
     @NotBlank
     private String description;
 
-    @NotBlank
     private String urlImage;
 
     @NotBlank
