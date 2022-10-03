@@ -1,7 +1,6 @@
 package com.vegi.vegilabback.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import com.vegi.vegilabback.model.enums.CostEnum;
 import com.vegi.vegilabback.model.enums.DifficultyEnum;
 import com.vegi.vegilabback.model.enums.StatusEnum;
@@ -11,17 +10,16 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.*;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-public class Recipe {
+@Table(name = "recipes")
+public class Recipe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,31 +33,32 @@ public class Recipe {
 
     private String urlImage;
 
-    @NotBlank
+    @NotNull
     private int cookTime;
 
-    @NotBlank
+    @NotNull
     private int prepareTime;
 
     @JsonFormat(pattern="dd-MM-yyyy")
     private Date publishDate;
 
-    @NotBlank
+    @NotNull
     private int nbPerson;
 
-    @NotBlank
+    @NotNull
     private StatusEnum status;
 
-    @NotBlank
+    @NotNull
     private DifficultyEnum difficulty;
 
-    @NotBlank
+    @NotNull
     private CostEnum cost;
 
     @ElementCollection
     List<String> steps = new ArrayList<>();
 
-    @ManyToOne
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @ManyToMany(mappedBy = "favoritesRecipes")
@@ -67,15 +66,19 @@ public class Recipe {
     Set<User> likes;
 
     @OneToMany(mappedBy = "recipe")
+    @JsonIgnore
     Set<Preparation> preparations;
 
     @OneToMany(mappedBy = "recipe")
+    @JsonIgnore
     Set<Planning> plannings;
 
-    @ManyToMany
-    @JoinTable(
-            name = "categories_list",
-            joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
-    Set<Category> categories;
+
+/*    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinTable(name = "recipe_categories",
+            joinColumns = { @JoinColumn(name = "recipe_id") },
+            inverseJoinColumns = { @JoinColumn(name = "category_id") })
+    private Set<Category> categories = new HashSet<>();*/
+
 }
