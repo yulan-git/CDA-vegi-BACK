@@ -16,6 +16,8 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +38,7 @@ public class User {
 
     @ManyToOne
     private Role role;
+/*
 
     @ManyToMany
     @JoinTable(
@@ -46,6 +49,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     Set<Planning> plannings;
+*/
 
     public User(String username, String email, String password) {
         this.username = username;

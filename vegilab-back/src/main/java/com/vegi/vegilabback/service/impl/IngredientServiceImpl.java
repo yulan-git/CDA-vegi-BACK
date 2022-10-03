@@ -1,7 +1,6 @@
 package com.vegi.vegilabback.service.impl;
 
 import com.vegi.vegilabback.model.Ingredient;
-import com.vegi.vegilabback.payload.MessageResponse;
 import com.vegi.vegilabback.repository.IngredientRepository;
 import com.vegi.vegilabback.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;

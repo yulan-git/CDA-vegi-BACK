@@ -61,17 +61,17 @@ public class Recipe implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @ManyToMany(mappedBy = "favoritesRecipes")
+/*    @ManyToMany(mappedBy = "favoritesRecipes")
     @JsonIgnore
     Set<User> likes;
 
     @OneToMany(mappedBy = "recipe")
     @JsonIgnore
-    Set<Preparation> preparations;
+    Set<Preparation> preparations;*/
 
-    @OneToMany(mappedBy = "recipe")
+/*    @OneToMany(mappedBy = "recipe")
     @JsonIgnore
-    Set<Planning> plannings;
+    Set<Planning> plannings;*/
 
 
 /*    @ManyToMany(fetch = FetchType.LAZY)
