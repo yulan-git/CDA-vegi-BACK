@@ -1,0 +1,258 @@
+{
+  "categories": [
+    {
+      "label": "pizza"
+    },
+    {
+      "label": "entrée"
+    },
+    {
+      "label": "plat"
+    },
+    {
+      "label": "dessert"
+    },
+    {
+      "label": "vegan"
+    },
+    {
+      "label": "pâtes"
+    },
+    {
+      "label": "gratin"
+    },
+    {
+      "label": "asiatique"
+    },
+    {
+      "label": "exotique"
+    },
+    {
+      "label": "salade"
+    },
+    {
+      "label": "tarte"
+    },
+    {
+      "label": "sans lait"
+    },
+    {
+      "label": "sans oeuf"
+    },
+    {
+      "label": "sucré"
+    },
+    {
+      "label": "salé"
+    },
+    {
+      "label": "apéritif"
+    },
+    {
+      "label": "boisson"
+    },
+    {
+      "label": "snack"
+    },
+    {
+      "label": "indien"
+    },
+    {
+      "label": "japonais"
+    },
+    {
+      "label": "thailandais"
+    }
+  ],
+  "roles": [
+    {
+      "name": "USER"
+    },
+    {
+      "name": "ADMIN"
+    },
+    {
+      "name": "MODERATOR"
+    }
+  ],
+  "users": [
+    {
+      "username": "yulanUser",
+      "email": "yulan@mail.com",
+      "password": "toto"
+    }
+  ],
+  "aliments": [
+    {"label":"LAIT DE BUFFLONNE"},
+    {"label":"CASEINE"},
+    {"label":"LAIT DE VACHE"},
+    {"label":"LAIT DE CHEVRE"},
+    {"label":"LAIT DE BREBIS"},
+    {"label": "BLANC(s) D'OEUF"},
+    {"label": "JAUNE(s) D'OEUF"},
+    {"label": "FEVE(s)"},
+    {"label": "HARICOTS ROUGES"},
+    {"label": "HARICOTS BLANCS"},
+    {"label": "POIS CHICHE"},
+    {"label": "LENTILLE(s)"},
+    {"label": "PETIT POIS"},
+    {"label": "ORGE"},
+    {"label": "SARRASIN"},
+    {"label": "MAIS"},
+    {"label": "SEMOULE DE BLE"},
+    {"label": "GLIADINE (GLUTEN)"},
+    {"label": "MALT"},
+    {"label": "MILLET"},
+    {"label": "AVOINE"},
+    {"label": "POLENTA"},
+    {"label": "QUINOA"},
+    {"label": "RIZ"},
+    {"label": "RIZ BASMATI"},
+    {"label": "RIZ PARFUME"},
+    {"label": "RIZ JAPONAIS"},
+    {"label": "FARINE DE SEIGLE"},
+    {"label": "ÉPEAUTRE"},
+    {"label": "TAPIOCA"},
+    {"label": "TRANSGLUTAMINASE"},
+    {"label": "FARINE DE BLE"},
+    {"label": "SON"},
+    {"label": "AGAR"},
+    {"label": "ALGA ESPAGUETTE"},
+    {"label": "ALGA SPIRULINA"},
+    {"label": "ALGA WAKAME"},
+    {"label": "AMANDE(s)"},
+    {"label": "NOIX DU BRÉSIL"},
+    {"label": "NOIX DE CAJOU"},
+    {"label": "NOIX DE COCO"},
+    {"label": "NOIX DE COLA"},
+    {"label": "GRAINE(s) DE LIN"},
+    {"label": "NOISETTE(s)"},
+    {"label": "NOIX DE MACADAMIA"},
+    {"label": "CACAHUèTE(s)"},
+    {"label": "PIGNON(s) DE PIN"},
+    {"label": "PISTACHE"},
+    {"label": "GRAINE(s) DE COLZA"},
+    {"label": "GRAINE(s) DE SESAME"},
+    {"label": "GRAINE(s) DE SOJA"},
+    {"label": "GRAINE(s) DE TOURNESOL"},
+    {"label": "NOIX DE TIGRE"},
+    {"label": "NOIX"},
+    {"label": "SUCRE DE CANNE"},
+    {"label": "GRAINE(s) DE CAROUBIER"},
+    {"label": "CACAO"},
+    {"label": "CAFÉ"},
+    {"label": "MIEL"},
+    {"label": "THÉ VERT"},
+    {"label": "THÉ NOIR"},
+    {"label": "LEVURE DE PAIN"},
+    {"label": "LEVURE DE BIERE"},
+    {"label": "ALOE VERA"},
+    {"label": "ANIS"},
+    {"label": "BASILIC"},
+    {"label": "LAURIER"},
+    {"label": "CAMOMILLE"},
+    {"label": "CÂPRE"},
+    {"label": "CAYENNE"},
+    {"label": "CANNELLE"},
+    {"label": "CLOU DE GIROFLE"},
+    {"label": "CORIANDRE"},
+    {"label": "CUMIN"},
+    {"label": "CURRY"},
+    {"label": "ANETH"},
+    {"label": "AIL"},
+    {"label": "GINGEMBRE"},
+    {"label": "GINKO"},
+    {"label": "GINSENG"},
+    {"label": "HOUBLON"},
+    {"label": "RÉGLISSE"},
+    {"label": "MARJOLAINE"},
+    {"label": "MENTHE"},
+    {"label": "GRAINE(s) DE MOUTARDE"},
+    {"label": "NOIX DE MUSCADE"},
+    {"label": "OIGNON"},
+    {"label": "PERSIL"},
+    {"label": "POIVRE NOIR/GRIS"},
+    {"label": "MENTHE POIVRÉE"},
+    {"label": "PIMENT"},
+    {"label": "ROMARIN"},
+    {"label": "SAFRAN"},
+    {"label": "SAUGE"},
+    {"label": "ECHALOTTE"},
+    {"label": "ESTRAGON"},
+    {"label": "THYM"},
+    {"label": "VANILLE"},
+    {"label": "GOUSSE(S) de vanille"},
+    {"label": "AMARATHE "},
+    {"label": "ARTICHAUT(s)"},
+    {"label": "ASPERGE(s)"},
+    {"label": "AUBERGINE(s)"},
+    {"label": "HARICOTS VERTS"},
+    {"label": "BETTERAVE(s)"},
+    {"label": "BROCCOLI(s)"},
+    {"label": "CHOUX DE BRUXELLES"},
+    {"label": "CHOU(x)"},
+    {"label": "CHOU(x) ROUGE"},
+    {"label": "CAROTTE(s)"},
+    {"label": "CHOU-FLEUR"},
+    {"label": "CELERI"},
+    {"label": "BETTE(s)"},
+    {"label": "ENDIVE(s)"},
+    {"label": "CONCOMBRE(s)"},
+    {"label": "FENOUIL(s)"},
+    {"label": "CALEBASSE(s)"},
+    {"label": "POIREAU(x)"},
+    {"label": "LAITUE(s)"},
+    {"label": "COURGE(s)"},
+    {"label": "CHAMPIGNON(s)"},
+    {"label": "ORTIE(s)"},
+    {"label": "POIVRON(s) VERT(s)"},
+    {"label": "POIVRON(s) ROUGE(s)"},
+    {"label": "POMME(s) DE TERRE"},
+    {"label": "RADIS"},
+    {"label": "ROQUETTE"},
+    {"label": "EPINARD(s)"},
+    {"label": "PATATE DOUCE"},
+    {"label": "NAVET(s)"},
+    {"label": "CRESSON"},
+    {"label": "YUCCA"},
+    {"label": "POMME(s)"},
+    {"label": "ABRICOT(s)"},
+    {"label": "AVOCAT(s)"},
+    {"label": "BANANE(s)"},
+    {"label": "MÛRE(s)"},
+    {"label": "CASSIS"},
+    {"label": "MYRTILLE(s)"},
+    {"label": "CERISE(s)"},
+    {"label": "CHÂTAIGNE(s)"},
+    {"label": "CANNEBERGE(s)"},
+    {"label": "DATTE(s)"},
+    {"label": "FIGUE(s)"},
+    {"label": "RAISIN(s)"},
+    {"label": "PAMPLEMOUSSE(s)"},
+    {"label": "GOYAVE(s)"},
+    {"label": "KIWI(s) "},
+    {"label": "CITRON(s)"},
+    {"label": "CITRON(s) VERT"},
+    {"label": "LITCHI(s)"},
+    {"label": "MANGUE(s)"},
+    {"label": "MELON(s)"},
+    {"label": "NECTARINE(s)"},
+    {"label": "OLIVE(s)"},
+    {"label": "ORANGE(s)"},
+    {"label": "PAPAYE(s)"},
+    {"label": "PÊCHE(s)"},
+    {"label": "POIRE(s)"},
+    {"label": "ANANAS"},
+    {"label": "PRUNE(s)"},
+    {"label": "GRENADE(s)"},
+    {"label": "RAISIN(s) SEC"},
+    {"label": "FRAMBOISE(s)"},
+    {"label": "GROSEILLE(s)"},
+    {"label": "RHUBARBE(s)"},
+    {"label": "FRAISE(s)"},
+    {"label": "TANGERINE(s)"},
+    {"label": "TOMATE(s)"},
+    {"label": "PASTEQUE(s)"}
+  ]
+
+}

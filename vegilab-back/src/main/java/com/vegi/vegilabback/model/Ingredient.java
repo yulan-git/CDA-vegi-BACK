@@ -1,11 +1,13 @@
 package com.vegi.vegilabback.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Data
@@ -20,6 +22,10 @@ public class Ingredient {
     @NotBlank
     private String label;
 
-    @OneToMany(mappedBy = "ingredient")
-    Set<Preparation> preparations;
+    @NotNull
+    private boolean isAdded;
+
+/*    @OneToMany(mappedBy = "ingredient")
+    @JsonIgnore
+    Set<Preparation> preparations;*/
 }
