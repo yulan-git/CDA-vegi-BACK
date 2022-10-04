@@ -1,5 +1,6 @@
 package com.vegi.vegilabback.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,8 +16,8 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
-@Data
 @NoArgsConstructor
+@Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,21 +39,11 @@ public class User {
     @ManyToOne
     private Role role;
 
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
     }
-/*
-    @ManyToMany
-    @JoinTable(
-            name = "favorites_list",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "recipe_id"))
-    Set<Recipe> favoritesRecipes;
-
-    @OneToMany(mappedBy = "user")
-    Set<Planning> plannings;
-*/
 
 }
