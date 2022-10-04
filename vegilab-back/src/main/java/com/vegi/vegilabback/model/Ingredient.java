@@ -21,7 +21,7 @@ public class Ingredient {
 
     @NotBlank
     private String label;
-
+    
     @NotNull
     private boolean isAdded;
 

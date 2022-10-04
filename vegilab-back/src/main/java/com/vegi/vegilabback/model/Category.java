@@ -26,11 +26,15 @@ public class Category implements Serializable {
 
     @NotBlank
     private String label;
-
+    
     @NotNull
     private boolean isAdded;
 
-   /* @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
+/*  @ManyToMany(mappedBy = "categories")
+    @JsonIgnore
+    Set<Recipe> belongs;*/
+    
+    /* @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
     @JsonIgnore
     private Set<Recipe> recipes = new HashSet<>();*/
 }

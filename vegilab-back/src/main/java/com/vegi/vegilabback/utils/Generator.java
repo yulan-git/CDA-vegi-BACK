@@ -71,7 +71,8 @@ public class Generator implements CommandLineRunner {
                 roles = RoleEnum.MODERATOR;
             }
             Role role = new Role(
-                    null
+                    null,
+                    roles
             );
             this.roleRepository.save(role);
         };
