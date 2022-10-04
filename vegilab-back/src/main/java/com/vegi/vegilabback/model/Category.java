@@ -21,7 +21,7 @@ public class Category {
     @NotBlank
     private String label;
 
-    @ManyToMany(mappedBy = "categories")
+/*    @ManyToMany(mappedBy = "categories")
     @JsonIgnore
-    Set<Recipe> belongs;
+    Set<Recipe> belongs;*/
 }

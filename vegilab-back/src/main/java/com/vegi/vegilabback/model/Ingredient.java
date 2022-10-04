@@ -20,6 +20,6 @@ public class Ingredient {
     @NotBlank
     private String label;
 
-    @OneToMany(mappedBy = "ingredient")
-    Set<Preparation> preparations;
+/*    @OneToMany(mappedBy = "ingredient")
+    Set<Preparation> preparations;*/
 }

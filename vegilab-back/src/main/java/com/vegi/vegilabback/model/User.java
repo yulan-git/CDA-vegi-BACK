@@ -20,7 +20,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotBlank
     @Size(max = 20)
@@ -32,12 +32,18 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(max = 45)
+    @Size(max = 120)
     private String password;
 
     @ManyToOne
     private Role role;
 
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+/*
     @ManyToMany
     @JoinTable(
             name = "favorites_list",
@@ -47,5 +53,6 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     Set<Planning> plannings;
+*/
 
 }
