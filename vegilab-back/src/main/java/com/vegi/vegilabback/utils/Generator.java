@@ -71,25 +71,10 @@ public class Generator implements CommandLineRunner {
                 roles = RoleEnum.MODERATOR;
             }
             Role role = new Role(
-                    null,
                     roles
             );
             this.roleRepository.save(role);
         };
 
-
-        Set<Recipe> favoritesRecipes = new HashSet<>();
-        Set<Planning> plannings = new HashSet<>();
-        Any userAny = any.get("users");
-        Optional<Role> role = roleRepository.findByName(RoleEnum.USER);
-        System.out.println("------------>" + role);
-        for (Any a : userAny) {
-            User user = new User(
-                    a.get("username").toString(),
-                    a.get("email").toString(),
-                    a.get("password").toString()
-            );
-          this.userRepository.save(user) ;
-        }
     }
 }

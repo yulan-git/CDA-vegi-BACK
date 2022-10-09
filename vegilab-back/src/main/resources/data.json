@@ -75,13 +75,6 @@
       "name": "MODERATOR"
     }
   ],
-  "users": [
-    {
-      "username": "yulanUser",
-      "email": "yulan@mail.com",
-      "password": "toto"
-    }
-  ],
   "aliments": [
     {"label":"LAIT DE BUFFLONNE"},
     {"label":"CASEINE"},

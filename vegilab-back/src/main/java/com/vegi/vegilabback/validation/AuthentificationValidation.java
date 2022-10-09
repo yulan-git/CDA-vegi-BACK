@@ -1,19 +1,48 @@
 package com.vegi.vegilabback.validation;
 
 import com.vegi.vegilabback.security.services.UserDetailsImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
 public class AuthentificationValidation {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private String adminSecret;
+    @Autowired
+    public String isAdminOrnot(@Value("${vegilab.app.adminSecretName}") String adminSecretName) {
+        this.adminSecret = adminSecretName;
+        return this.adminSecret;
+    }
+
+    public String getAdminSecret() {
+        return adminSecret;
+    }
+
+    private List<String> moderatorSecretNames = new ArrayList<>();
+
+    @Autowired
+    public void setModeratorSecretNames(@Value("#{'${vegilab.app.moderatorSecretNames}'.split(',')}") List<String> moderatorSecretNames) {
+        this.moderatorSecretNames.addAll(moderatorSecretNames);
+    }
+
+    public List<String> getModeratorSecretNames() {
+        return moderatorSecretNames;
+    }
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     public UserDetailsImpl getUserDetails(){
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         return userDetails;
     }
 
-    public Long getTokenUserId(){
+    public Long getTokenId(){
         UserDetailsImpl userDetails = getUserDetails();
         Long tokenUserId = userDetails.getId();
         return tokenUserId;
@@ -31,11 +60,19 @@ public class AuthentificationValidation {
     }
 
     public boolean isAdmin(){
-        if (getTokenUsername().matches("^Yulanlaf56$")){
+        if(getTokenUsername() == getAdminSecret()){
             return true;
-        }else{
+        }else {
             return false;
         }
     }
 
+    public boolean isModerator() {
+        for (var names : getModeratorSecretNames()) {
+            if (getTokenUsername().equals(names)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
