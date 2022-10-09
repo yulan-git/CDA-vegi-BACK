@@ -1,6 +1,8 @@
 package com.vegi.vegilabback.repository;
 
+import com.vegi.vegilabback.dto.UserDto;
 import com.vegi.vegilabback.model.Recipe;
+import com.vegi.vegilabback.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,15 +17,24 @@ import java.util.List;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Page<Recipe> findAll(Pageable pageable);
     Recipe getById(Long id);
-    Page<Recipe> findByPublishDate(Date date, Pageable pageable);
     Page<Recipe> findByName(String name, Pageable paging);
 
-    @Query(value = "SELECT vegi.recipes.name, vegi.recipes.cook_time, vegi.recipes.id, vegi.recipes.cost, " +
-            "vegi.recipes.description, vegi.recipes.difficulty, vegi.recipes.nb_person, vegi.recipes.prepare_time, " +
-            "vegi.recipes.publish_date, vegi.recipes.user_id, vegi.recipes.status, vegi.recipes.url_image" +
-            "FROM vegi.categories_list " +
-            "RIGHT JOIN vegi.recipes ON recipes.id = categories_list.recipe_id " +
-            "WHERE categories_list.category_id=?1 " +
+    @Query(value = "SELECT *"+
+            "FROM vegi.recipe_category " +
+            "RIGHT JOIN vegi.recipes ON recipes.id = recipe_category.recipe_id " +
+            "WHERE recipe_category.category_id=?1 " +
             "ORDER BY recipes.publish_date DESC LIMIT 5", nativeQuery = true)
     List<Recipe> findByCategories(Long categoryId);
+
+    @Query(value = "SELECT *\n" +
+            "            FROM vegi.recipes \n" +
+            "            RIGHT JOIN vegi.users ON vegi.recipes.user_id = vegi.users.id \n" +
+            "            WHERE users.id=?1 ", nativeQuery = true)
+    Page<Recipe> findByUserId(Long id, Pageable paging);
+
+    @Query(value = "SELECT *\n" +
+            "            FROM vegi.recipes \n" +
+            "            RIGHT JOIN vegi.users ON vegi.recipes.user_id = vegi.users.id \n" +
+            "            WHERE users.id=?1 ", nativeQuery = true)
+    List<Recipe> findAllByUser(Long id);
 }

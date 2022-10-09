@@ -26,4 +26,5 @@ public class ReadRecipeDto {
     private UserDto user;
     List<String> steps = new ArrayList<>();
     Set<Category> categories;
+    Set<UserDto> likes;
 }

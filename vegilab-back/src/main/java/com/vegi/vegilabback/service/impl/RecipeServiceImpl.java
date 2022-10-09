@@ -1,24 +1,21 @@
 package com.vegi.vegilabback.service.impl;
 
-import com.vegi.vegilabback.dto.ReadRecipeDto;
-import com.vegi.vegilabback.dto.CreateRecipeDto;
-import com.vegi.vegilabback.dto.SimpleRecipeDto;
-import com.vegi.vegilabback.model.CategoriesList;
-import com.vegi.vegilabback.model.Category;
-import com.vegi.vegilabback.model.Recipe;
+import com.vegi.vegilabback.dto.*;
+import com.vegi.vegilabback.model.*;
 import com.vegi.vegilabback.model.enums.StatusEnum;
-import com.vegi.vegilabback.repository.CategoriesListRepository;
-import com.vegi.vegilabback.repository.CategoryRepository;
-import com.vegi.vegilabback.repository.RecipeRepository;
-import com.vegi.vegilabback.repository.UserRepository;
+import com.vegi.vegilabback.repository.*;
 import com.vegi.vegilabback.service.RecipeService;
+import lombok.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
+@Transactional
 public class RecipeServiceImpl implements RecipeService {
     @Autowired
     RecipeRepository recipeRepository;
@@ -28,82 +25,113 @@ public class RecipeServiceImpl implements RecipeService {
     CategoriesListRepository categoriesListRepository;
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
 
     ModelMapper mapper = new ModelMapper();
 
     @Override
-    public List<ReadRecipeDto> getRecipes() {
-        List<ReadRecipeDto> recipes = new ArrayList<>();
-        Iterable<Recipe> recipeList = recipeRepository.findAll();
+    public List<SimpleRecipeDto> getRecipes(List<Recipe> recipeList) {
+        List<SimpleRecipeDto> recipes = new ArrayList<>();
         for (var recipe: recipeList) {
-            ReadRecipeDto readRecipeDto = addCategoriesToRecipe(recipe);
-            recipes.add(readRecipeDto);
+            SimpleRecipeDto simpleRecipeDto = mapper.map(recipe, SimpleRecipeDto.class);
+            recipes.add(simpleRecipeDto);
         }
         return recipes;
     }
 
     @Override
     public ReadRecipeDto getRecipe(Long id) {
-        var recipe = recipeRepository.getById(id);
-        if(recipe != null){
-            ReadRecipeDto readRecipeDto = addCategoriesToRecipe(recipe);
+        Optional<Recipe> recipe = recipeRepository.findById(id);
+        if(recipe.isPresent()){
+            ReadRecipeDto readRecipeDto = mapper.map(recipe, ReadRecipeDto.class);
             return readRecipeDto;
         }
         return null;
     }
 
-    private ReadRecipeDto addCategoriesToRecipe(Recipe recipe) {
-        Set<Category> categories = new HashSet<>();
-        List<CategoriesList> categoriesList = categoriesListRepository.getCategoriesListByRecipe(recipe);
-        for (var catL : categoriesList) {
-            var cat = categoryRepository.getById(catL.getCategory().getId());
-            categories.add(cat);
+    public void addOrCreateCatToRec(Recipe recipe) {
+        // Copie la liste de recette
+        Set<Category> categories = recipe.getCategories();
+
+        // Réinitialise la liste des recettes à vide
+        recipe.setCategories(new HashSet<>());
+        for (var cat : categories) {
+            Long catId = cat.getId();
+
+            // Si la cétgorie existe, on la l'ajoute
+            if (catId != null) {
+                Optional<Category> _cat = categoryRepository.findById(catId);
+                recipe.addCategory(_cat.get());
+            }
+            // Sinon on crée une nouvelle recette avec is Added à false
+            else {
+                cat.setAdded(false);
+                categoryRepository.save(cat);
+                recipe.addCategory(cat);
+            }
         }
-        ReadRecipeDto readRecipeDto = mapper.map(recipe, ReadRecipeDto.class);
-        readRecipeDto.setCategories(categories);
-        return readRecipeDto;
     }
 
     @Override
-    public Recipe createRecipe(CreateRecipeDto createRecipeDto) {
-        var user =  userRepository.getReferenceById(1L);
+    public Recipe createRecipe(CreateRecipeDto createRecipeDto, Long id) {
+        var user =  userRepository.getReferenceById(id);
         var recipe = mapper.map(createRecipeDto, Recipe.class);
-        recipe.setName(createRecipeDto.getName());
         recipe.setStatus(StatusEnum.EN_ATTENTE);
         recipe.setUser(user);
+        addOrCreateCatToRec(recipe);
         this.recipeRepository.save(recipe);
-        Set<CategoriesList> categoriesList = new HashSet<>();
-        addCategories(createRecipeDto, recipe, categoriesList);
         return recipe;
     }
 
+    @Override
+    public void deleteAllRecipesFromUser(@NonNull Long id) {
+        List<Recipe> recipes = recipeRepository.findAllByUser(id);
 
-    private void addCategories(CreateRecipeDto createRecipeDto, Recipe recipe, Set<CategoriesList> categoriesList) {
-        for (var cat: createRecipeDto.getCategories()
-        ) {
-            var categories = new CategoriesList();
-            categories.setCategory(cat);
-            categories.setRecipe(recipe);
-            categoriesListRepository.save(categories);
-            categoriesList.add(categories);
+        for (var recipe: recipes) {
+            if(recipe !=null){
+            recipeRepository.deleteAll(recipes);
+            }
         }
     }
 
     @Override
-    public List<ReadRecipeDto> getRecipesByCategory(String category) {
-        List<ReadRecipeDto> recipes = getRecipes();
-        List<ReadRecipeDto> recipesByCat = new ArrayList<>();
-        for (var recipe  : recipes) {
-            Set<Category> categories = recipe.getCategories();
-            for (var cat: categories){
-                if (cat.getLabel().equals(category)){
-                    recipesByCat.add(recipe);
-                }
-            }
-        }
-        return recipesByCat;
+    public void deleteRecipeById(Long id) {
+        Recipe recipe = recipeRepository.getById(id);
+        recipeRepository.delete(recipe);
     }
 
+    @Override
+    public void addRecipeToFavorite(RecipeWithFavoritesDto recipeWithFavoritesDto, Long userId) {
+        User user = userRepository.getReferenceById(userId);
+        var recipe = recipeRepository.getById(recipeWithFavoritesDto.getId());
+        user.addRecipe(recipe);
+        this.userRepository.save(user);
+        this.recipeRepository.save(recipe);
+    }
+
+    @Override
+    public Recipe updateStatus(Long recId, StatusEnum status) {
+        var recipe = recipeRepository.findById(recId);
+        recipe.get().setStatus(status);
+        return recipe.get();
+    }
+
+
+    @Override
+    public Recipe updateRecipe(UpdateRecipeDto updateRecipeDto, Long recId, Long userId) {
+        var recipe = recipeRepository.getById(recId);
+        var user = recipe.getUser();
+        if(recipe.getUser().getId() == userId){
+            recipe = mapper.map(updateRecipeDto, Recipe.class);
+            recipe.setUser(user);
+            recipe.setStatus(StatusEnum.EN_ATTENTE);
+            addOrCreateCatToRec(recipe);
+            recipeRepository.save(recipe);
+            return recipe;
+        }
+        return null;
+    }
 
 
 }

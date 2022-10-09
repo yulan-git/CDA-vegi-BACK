@@ -15,9 +15,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Entity
 public class Category implements Serializable {
     @Id
@@ -33,8 +31,49 @@ public class Category implements Serializable {
 /*  @ManyToMany(mappedBy = "categories")
     @JsonIgnore
     Set<Recipe> belongs;*/
-    
-    /* @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST
+            },
+            mappedBy = "categories")
     @JsonIgnore
-    private Set<Recipe> recipes = new HashSet<>();*/
+    private Set<Recipe> recipes = new HashSet<>();
+
+    public Category(){
+
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public boolean isAdded() {
+        return isAdded;
+    }
+
+    public void setAdded(boolean added) {
+        isAdded = added;
+    }
+
+    public Set<Recipe> getRecipes() {
+        return recipes;
+    }
+
+    public void setRecipes(Set<Recipe> recipes) {
+        this.recipes = recipes;
+    }
 }

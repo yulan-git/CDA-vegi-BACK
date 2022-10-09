@@ -25,6 +25,7 @@ public class CreateRecipeDto {
     private String urlImage;
     private int cookTime;
     private int prepareTime;
+    @JsonFormat(pattern="dd-MM-yyyy")
     private Date publishDate;
     private int nbPerson;
     private DifficultyEnum difficulty;
