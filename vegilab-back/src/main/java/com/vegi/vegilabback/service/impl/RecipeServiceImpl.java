@@ -22,8 +22,6 @@ public class RecipeServiceImpl implements RecipeService {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    CategoriesListRepository categoriesListRepository;
-    @Autowired
     CategoryRepository categoryRepository;
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
