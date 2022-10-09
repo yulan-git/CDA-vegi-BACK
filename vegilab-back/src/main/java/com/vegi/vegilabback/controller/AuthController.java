@@ -1,5 +1,6 @@
 package com.vegi.vegilabback.controller;
 
+import com.vegi.vegilabback.dto.CreateUserDto;
 import com.vegi.vegilabback.exception.TokenRefreshException;
 import com.vegi.vegilabback.model.RefreshToken;
 import com.vegi.vegilabback.model.Role;
@@ -16,8 +17,10 @@ import com.vegi.vegilabback.repository.UserRepository;
 import com.vegi.vegilabback.security.jwt.JwtUtils;
 import com.vegi.vegilabback.security.services.RefreshTokenService;
 import com.vegi.vegilabback.security.services.UserDetailsImpl;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,7 +34,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -51,7 +54,9 @@ public class AuthController {
     @Autowired
     RefreshTokenService refreshTokenService;
 
-    @PostMapping("/signin")
+    ModelMapper mapper = new ModelMapper();
+
+    @PostMapping("/auth/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager
@@ -76,22 +81,23 @@ public class AuthController {
                 roles));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         return registerProcess(signUpRequest, RoleEnum.USER);
     }
 
-    @PostMapping("/signAdminUp")
+    @PostMapping("/auth/advegim")
     public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignupRequest signUpRequest) {
         return registerProcess(signUpRequest, RoleEnum.ADMIN);
     }
 
-    @PostMapping("/signModeratorUp")
+    @PostMapping("/modvegilator")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> registerModerator(@Valid @RequestBody SignupRequest signUpRequest) {
         return registerProcess(signUpRequest, RoleEnum.MODERATOR);
     }
 
-    @PostMapping("/refreshtoken")
+    @PostMapping("/auth/refreshtoken")
     public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
 
@@ -114,7 +120,7 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Log out successful!"));
     }
 
-    private ResponseEntity<?> registerProcess(@RequestBody @Valid SignupRequest signUpRequest, RoleEnum user2) {
+    private ResponseEntity<?> registerProcess(@RequestBody @Valid SignupRequest signUpRequest, RoleEnum roleEnum) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
         }
@@ -124,11 +130,13 @@ public class AuthController {
         }
 
         // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
+        CreateUserDto userDto = new CreateUserDto(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
-        Role role = roleRepository.findByName(user2)
+        User user = mapper.map(userDto, User.class);
+
+        Role role = roleRepository.findByName(roleEnum)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
         user.setRole(role);
