@@ -19,12 +19,12 @@ import java.util.List;
 @Repository
 @Getter
 @Setter
-@RequestMapping("api")
+@RequestMapping("api/ingredient")
 public class IngredientController {
     @Autowired
     IngredientService ingredientService;
 
-    @GetMapping("/ingredients")
+    @GetMapping("/ingredient")
     public ResponseEntity<List<Ingredient>> getIngredients() {
         List<Ingredient> ingredients = ingredientService.getIngredients();
         return ResponseEntity.ok(ingredients);
