@@ -115,6 +115,14 @@ public class RecipeServiceImpl implements RecipeService {
         return recipe.get();
     }
 
+    @Override
+    public List<Recipe> findRecipeById(List<Long> recipes) {
+        for (var r:recipes) {
+            System.out.println("rec ----->"+ r);
+        }
+        return null;
+    }
+
 
     @Override
     public Recipe updateRecipe(UpdateRecipeDto updateRecipeDto, Long recId, Long userId) {

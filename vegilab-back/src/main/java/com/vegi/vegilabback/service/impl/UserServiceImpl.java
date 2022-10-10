@@ -1,11 +1,11 @@
 package com.vegi.vegilabback.service.impl;
 
-import com.vegi.vegilabback.dto.UpdateUserDto;
 import com.vegi.vegilabback.dto.UserDto;
 import com.vegi.vegilabback.dto.UserDtoForList;
-import com.vegi.vegilabback.exception.UserNotFoundException;
+import com.vegi.vegilabback.model.PasswordResetToken;
 import com.vegi.vegilabback.model.RefreshToken;
 import com.vegi.vegilabback.model.User;
+import com.vegi.vegilabback.repository.PasswordTokenRepository;
 import com.vegi.vegilabback.repository.RefreshTokenRepository;
 import com.vegi.vegilabback.repository.UserRepository;
 import com.vegi.vegilabback.service.UserService;
@@ -26,6 +26,8 @@ public class UserServiceImpl implements UserService {
     RefreshTokenRepository refreshTokenRepository;
     @Autowired
     PasswordEncoder encoder;
+    @Autowired
+    PasswordTokenRepository passwordTokenRepository;
 
     ModelMapper mapper = new ModelMapper();
 
@@ -82,26 +84,25 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-
-    public void updateResetPasswordToken(String token, String email) throws UserNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
-            user.setResetPasswordToken(token);
-            userRepository.save(user);
-        } else {
-            throw new UserNotFoundException("Could not find any customer with the email " + email);
-        }
+    @Override
+    public void createPasswordResetTokenForUser(User user, String token) {
+        PasswordResetToken myToken = new PasswordResetToken(token, user);
+        passwordTokenRepository.save(myToken);
     }
 
-    public User getByResetPasswordToken(String token) {
-        return userRepository.findByResetPasswordToken(token);
+    @Override
+    public User findUserByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail);
     }
 
-    public void updatePassword(User user, String newPassword) {
-        String encodedPassword = encoder.encode(newPassword);
-        user.setPassword(encodedPassword);
-
-        user.setResetPasswordToken(null);
+    @Override
+    public void changeUserPassword(final User user, final String password) {
+        user.setPassword(encoder.encode(password));
         userRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> getUserByPasswordResetToken(final String token) {
+        return Optional.ofNullable(passwordTokenRepository.findByToken(token).get().getUser());
     }
 }
