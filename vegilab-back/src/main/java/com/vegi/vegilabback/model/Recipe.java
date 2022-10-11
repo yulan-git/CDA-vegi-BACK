@@ -5,6 +5,7 @@ import com.vegi.vegilabback.model.enums.CostEnum;
 import com.vegi.vegilabback.model.enums.DifficultyEnum;
 import com.vegi.vegilabback.model.enums.StatusEnum;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,10 +15,10 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 
+@AllArgsConstructor
+@Slf4j
 @Entity
 @Table(name = "recipes")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Recipe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -81,6 +82,10 @@ public class Recipe implements Serializable {
             mappedBy = "liked")
     @JsonIgnore
     private Set<User> likes = new HashSet<>();
+
+    public Recipe() {
+
+    }
 
 
     public void addCategory(Category cat) {

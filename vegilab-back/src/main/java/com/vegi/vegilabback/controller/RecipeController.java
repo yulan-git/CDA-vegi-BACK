@@ -1,9 +1,7 @@
 package com.vegi.vegilabback.controller;
 
 import com.vegi.vegilabback.dto.*;
-import com.vegi.vegilabback.exception.ResourceNotFoundException;
 import com.vegi.vegilabback.model.Recipe;
-import com.vegi.vegilabback.model.User;
 import com.vegi.vegilabback.model.enums.StatusEnum;
 import com.vegi.vegilabback.repository.CategoryRepository;
 import com.vegi.vegilabback.repository.RecipeRepository;
@@ -16,9 +14,7 @@ import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -59,6 +55,7 @@ public class RecipeController {
             var userId = authentificationValidation.getTokenId();
             if(userId != null) {
                 Recipe recipe = recipeService.createRecipe(recRequest, userId);
+                System.out.println("Recipe  3 ----->" + recipe);
                 return new ResponseEntity<>(recipe, HttpStatus.CREATED);
             }else{
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -82,7 +79,7 @@ public class RecipeController {
     }
 
     @GetMapping("/recipes/all")
-    public ResponseEntity<Map<String, Object>> getRecipes(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    public ResponseEntity<Map<String, Object>> getRecipes(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
         try {
             List<Recipe> recipes = new ArrayList<Recipe>();
             Pageable paging = PageRequest.of(page, size);
@@ -104,39 +101,6 @@ public class RecipeController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    /*@GetMapping("/recipes")
-    public ResponseEntity<Map<String, Object>> getSpecificRecipes(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size, @RequestParam(required = false) boolean famous, @RequestParam(required = false) Long categoryId) {
-        try {
-            List<Recipe> recipes = new ArrayList<Recipe>();
-            Pageable paging = PageRequest.of(page, size);
-            System.out.println("catID"+ categoryId);
-            Page<Recipe> r;
-            if(famous){
-                r = recipeRepository.findMostFamous(true, paging);
-                System.out.println("1----->"+r);
-            } else if(categoryId!=null){
-                r = recipeRepository.findByCategory(categoryId, paging);
-                System.out.println("2----->"+r);
-            } else{
-                r = recipeRepository.findAll(paging);
-                System.out.println("3----->"+r);
-            }
-            recipes = r.getContent();
-
-            List<SimpleRecipeDto> recipeDtos= recipeService.getRecipes(recipes);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("recipes", recipeDtos);
-            response.put("currentPage", r.getNumber());
-            response.put("totalItems", r.getTotalElements());
-            response.put("totalPages", r.getTotalPages());
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
 
     @DeleteMapping("/recipe/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
@@ -161,45 +125,20 @@ public class RecipeController {
         return ResponseEntity.ok(recipeByCategories);
     }
 
-    @GetMapping("/recipes/category/{id}")
-    public ResponseEntity<Map<String, Object>> getByCategory(@PathVariable Long id, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
-        try {
-                List<Recipe> recipes = new ArrayList<Recipe>();
-                Pageable paging = PageRequest.of(page, size);
-
-                Page<Recipe> r;
-                r = recipeRepository.findByCategoryId(id, paging);
-                recipes = r.getContent();
-
-                List<SimpleRecipeDto> recipeDtos= new ArrayList<>();
-
-                for (var recipe: recipes) {
-                    SimpleRecipeDto simpleRecipeDto = mapper.map(recipe, SimpleRecipeDto.class);
-                    recipeDtos.add(simpleRecipeDto);
-                }
-
-                Map<String, Object> response = new HashMap<>();
-                response.put("recipes", recipeDtos);
-                response.put("currentPage", r.getNumber());
-                response.put("totalItems", r.getTotalElements());
-                response.put("totalPages", r.getTotalPages());
-
-                return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    @GetMapping("/recipes/famous")
+    public ResponseEntity<List<SimpleRecipeDto>> getMostFamousRecipes() {
+        List<Long> recipesId = recipeRepository.findByFamous();
+        List<SimpleRecipeDto> famousRecipes = new ArrayList<>();
+        List<Recipe> recipes = new ArrayList<>();
+        for (var id : recipesId) {
+            Optional<Recipe> rec = recipeRepository.findById(id);
+            recipes.add(rec.get());
         }
-    }
-
-
-    @GetMapping("/api/recipes/famous")
-    public ResponseEntity<List<SimpleRecipeDto>> getMostFamousRecipes(@RequestParam Long id) {
-        List<Recipe> recipeList = recipeRepository.findByCategories(id);
-        List<SimpleRecipeDto> recipeByCategories = new ArrayList<>();
-        for (var recipe: recipeList) {
-            SimpleRecipeDto simpleRecipeDto = mapper.map(recipe, SimpleRecipeDto.class);
-            recipeByCategories.add(simpleRecipeDto);
+        for (var r : recipes){
+            SimpleRecipeDto simpleRecipeDto = mapper.map(r, SimpleRecipeDto.class);
+            famousRecipes.add(simpleRecipeDto);
         }
-        return ResponseEntity.ok(recipeByCategories);
+        return ResponseEntity.ok(famousRecipes);
     }
 
 

@@ -6,9 +6,10 @@ import com.vegi.vegilabback.model.enums.StatusEnum;
 import com.vegi.vegilabback.repository.*;
 import com.vegi.vegilabback.service.RecipeService;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,10 +24,11 @@ public class RecipeServiceImpl implements RecipeService {
     UserRepository userRepository;
     @Autowired
     CategoryRepository categoryRepository;
-    @Autowired
-    RefreshTokenRepository refreshTokenRepository;
 
     ModelMapper mapper = new ModelMapper();
+
+    public RecipeServiceImpl(CategoryRepository categoryRepository, RecipeRepository recipeRepository, UserRepository userRepository) {
+    }
 
     @Override
     public List<SimpleRecipeDto> getRecipes(List<Recipe> recipeList) {
@@ -74,10 +76,13 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public Recipe createRecipe(CreateRecipeDto createRecipeDto, Long id) {
         var user =  userRepository.getReferenceById(id);
+        System.out.println("User --->"+ user);
         var recipe = mapper.map(createRecipeDto, Recipe.class);
+        System.out.println("Recipe --->"+ recipe);
         recipe.setStatus(StatusEnum.EN_ATTENTE);
         recipe.setUser(user);
         addOrCreateCatToRec(recipe);
+        System.out.println("Recipe  2 ----->" + recipe);
         this.recipeRepository.save(recipe);
         return recipe;
     }
@@ -123,6 +128,13 @@ public class RecipeServiceImpl implements RecipeService {
         return null;
     }
 
+    @Override
+    public Set<Recipe> getUserFavorites(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        Set<Recipe> recipeList = user.get().getLiked();
+        return recipeList;
+    }
+
 
     @Override
     public Recipe updateRecipe(UpdateRecipeDto updateRecipeDto, Long recId, Long userId) {
@@ -138,6 +150,7 @@ public class RecipeServiceImpl implements RecipeService {
         }
         return null;
     }
+
 
 
 }

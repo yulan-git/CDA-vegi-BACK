@@ -17,26 +17,28 @@ import java.util.List;
 
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
-    @Query(value = "SELECT*FROM vegi.recipes RIGHT JOIN vegi.recipe_category ON vegi.recipes.id = vegi.recipe_category.recipe_id WHERE recipe_category.category_id=?1 ", nativeQuery = true)
-    Page<Recipe> findByCategoryId(Long id, Pageable paging);
+    /*@Query(value = "SELECT *\n" +
+            "            FROM vegi.recipes \n" +
+            "            LEFT JOIN vegi.recipe_category ON vegi.recipes.id = vegi.recipe_category.recipe_id \n" +
+            "            LEFT JOIN vegi.category ON vegi.category.id = vegi.recipe_category.category_id \n" +
+            "            WHERE vegi.category.label=?1", nativeQuery = true)
+    Page<Recipe> findByCategory(String category, Pageable paging);*/
 
     Page<Recipe> findAll(Pageable pageable);
     Recipe getById(Long id);
     Page<Recipe> findByName(String name, Pageable paging);
 
-    @Query(value = "SELECT *"+
+    @Query(value = "SELECT * "+
             "FROM vegi.recipe_category " +
             "RIGHT JOIN vegi.recipes ON recipes.id = recipe_category.recipe_id " +
             "WHERE recipe_category.category_id=?1 " +
-            "ORDER BY recipes.publish_date DESC LIMIT 5", nativeQuery = true)
+            "ORDER BY recipes.publish_date DESC LIMIT 3", nativeQuery = true)
     List<Recipe> findByCategories(Long categoryId);
 
     @Query(value = "SELECT *\n" +
             "            FROM vegi.recipes \n" +
             "            RIGHT JOIN vegi.users ON vegi.recipes.user_id = vegi.users.id \n" +
-            "            WHERE users.id=?1 ORDER BY\n" +
-            "    vegi.recipes.id DESC\n" +
-            "LIMIT 5", nativeQuery = true)
+            "            WHERE users.id=?1", nativeQuery = true)
     Page<Recipe> findByUserId(Long id, Pageable paging);
 
     @Query(value = "SELECT * " +
@@ -44,5 +46,9 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
             "RIGHT JOIN vegi.users ON vegi.recipes.user_id = vegi.users.id " +
             "WHERE users.id=?1 ", nativeQuery = true)
     List<Recipe> findAllByUser(Long id);
+
+
+    @Query(value = "SELECT vegi.recipe_favorites.recipe_id FROM vegi.recipe_favorites group by vegi.recipe_favorites.recipe_id ORDER BY count(vegi.recipe_favorites.recipe_id) DESC LIMIT 3;", nativeQuery = true)
+    List<Long> findByFamous();
 
 }

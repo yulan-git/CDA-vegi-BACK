@@ -15,10 +15,13 @@ import com.vegi.vegilabback.payload.response.TokenRefreshResponse;
 import com.vegi.vegilabback.repository.RoleRepository;
 import com.vegi.vegilabback.repository.UserRepository;
 import com.vegi.vegilabback.security.jwt.JwtUtils;
+import com.vegi.vegilabback.security.secretPropertiesConfig.PropertiesConfig;
+import com.vegi.vegilabback.security.secretPropertiesConfig.SecretConfig;
 import com.vegi.vegilabback.security.services.RefreshTokenService;
 import com.vegi.vegilabback.security.services.UserDetailsImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +38,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api")
+@PropertySource("classpath:secret.properties")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -53,6 +57,8 @@ public class AuthController {
 
     @Autowired
     RefreshTokenService refreshTokenService;
+
+    PropertiesConfig propertiesConfig = new PropertiesConfig();
 
     ModelMapper mapper = new ModelMapper();
 
@@ -83,11 +89,16 @@ public class AuthController {
 
     @PostMapping("/auth/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+
         return registerProcess(signUpRequest, RoleEnum.USER);
     }
 
     @PostMapping("/auth/advegim")
     public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignupRequest signUpRequest) {
+        SecretConfig secretConfig = new SecretConfig();
+        secretConfig.setRole("vegilab.app."+RoleEnum.ADMIN.getRole()+"SecretName");
+        secretConfig.setUsername(signUpRequest.getUsername());
+        propertiesConfig.writeToSecretProperties(secretConfig);
         return registerProcess(signUpRequest, RoleEnum.ADMIN);
     }
 

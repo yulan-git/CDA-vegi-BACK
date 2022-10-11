@@ -1,6 +1,8 @@
 package com.vegi.vegilabback.model;
 
 import com.vegi.vegilabback.model.enums.RoleEnum;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import javax.persistence.*;
 
