@@ -1,6 +1,5 @@
 package com.vegi.vegilabback.service;
 
-import com.vegi.vegilabback.dto.UpdateUserDto;
 import com.vegi.vegilabback.dto.UserDto;
 import com.vegi.vegilabback.dto.UserDtoForList;
 import com.vegi.vegilabback.model.User;

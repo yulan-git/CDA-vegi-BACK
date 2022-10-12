@@ -5,6 +5,7 @@ import com.vegi.vegilabback.model.enums.CostEnum;
 import com.vegi.vegilabback.model.enums.DifficultyEnum;
 import com.vegi.vegilabback.model.enums.StatusEnum;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,10 +15,10 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 
+@AllArgsConstructor
+@Slf4j
 @Entity
 @Table(name = "recipes")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Recipe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,11 +83,26 @@ public class Recipe implements Serializable {
     @JsonIgnore
     private Set<User> likes = new HashSet<>();
 
+    public Recipe() {
+
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
+    List<IngredientList> ingredientLists = new ArrayList<>();
+
 
     public void addCategory(Category cat) {
         this.categories.add(cat);
         cat.getRecipes().add(this);
     }
+
+
+/*    public void addIngredient(IngredientList ing) {
+        this.ingredientLists.add(ing);
+        ing.setRecipe(this);
+    }*/
+
+
 
     public Long getId() {
         return id;
@@ -206,5 +222,13 @@ public class Recipe implements Serializable {
 
     public void setLikes(Set<User> likes) {
         this.likes = likes;
+    }
+
+    public List<IngredientList> getIngredients() {
+        return ingredientLists;
+    }
+
+    public void setIngredients(List<IngredientList> ingredients) {
+        this.ingredientLists = ingredients;
     }
 }

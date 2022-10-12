@@ -246,6 +246,36 @@
     {"label": "TANGERINE(s)"},
     {"label": "TOMATE(s)"},
     {"label": "PASTEQUE(s)"}
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "name": "tarte aux pommes",
+      "description": "tarte tatin aux pommes entièrement faite maison",
+      "urlImage": null,
+      "cookTime": 20,
+      "prepareTime": 15,
+      "publishDate": "2022-09-20T00:00:00.000+02:00",
+      "nbPerson": 2,
+      "difficulty": "FACILE",
+      "cost": "BON_MARCHE",
+      "user": {
+        "username": "yulanUser4",
+        "email": "flora_56@live4.fr"
+      },
+      "steps": [
+        "Laver et éplucher les pommes",
+        "Couper les pommes en tranches épaisses"
+      ],
+      "categories": [
+        {
+          "id": 2,
+          "label": "entrée",
+          "added": true
+        }
+      ],
+      "likes": []
+    }
   ]
 
 }
