@@ -2,14 +2,18 @@ package com.vegi.vegilabback.controller;
 
 import com.vegi.vegilabback.exception.ResourceNotFoundException;
 import com.vegi.vegilabback.model.Category;
+import com.vegi.vegilabback.model.Ingredient;
 import com.vegi.vegilabback.repository.CategoryRepository;
 import com.vegi.vegilabback.repository.RecipeRepository;
 import com.vegi.vegilabback.service.CategoryService;
+import com.vegi.vegilabback.validation.AuthentificationValidation;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,19 +31,23 @@ public class CategoryController {
     @Autowired
     RecipeRepository recipeRepository;
 
-    @GetMapping("/category")
-    public ResponseEntity<List<Category>> getCategories() {
-        List<Category> categories = categoryService.getCategories();
+    @Value("${vegilab.app.adminSecretName}")
+    private String adminSecretName;
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<Category>> getCategoriesForUser() {
+        List<Category> categories = categoryService.getCategoriesForUser();
         return ResponseEntity.ok(categories);
     }
 
-    @PostMapping("/category")
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category newCategory = categoryService.createCategory(category);
-        if(newCategory.getId() != null){
-            return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
+    @GetMapping("/category/all")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('MODERATOR')")
+    public ResponseEntity<List<Category>> getAllCategories(AuthentificationValidation authentificationValidation) {
+        if(authentificationValidation.getTokenUsername().equals(adminSecretName)){
+            List<Category> ingredients = categoryService.getAllCategories();
+            return ResponseEntity.ok(ingredients);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
     }
 

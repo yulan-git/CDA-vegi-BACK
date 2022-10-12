@@ -33,10 +33,6 @@ public class Category implements Serializable {
     Set<Recipe> belongs;*/
 
     @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.MERGE,
-                    CascadeType.PERSIST
-            },
             mappedBy = "categories")
     @JsonIgnore
     private Set<Recipe> recipes = new HashSet<>();

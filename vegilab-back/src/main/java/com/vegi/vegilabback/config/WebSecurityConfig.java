@@ -72,8 +72,8 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**", "/api/category", "/api/ingredient", "/api/recipes", "/api/recipes/**").permitAll()
-                .antMatchers("/api/recipe/**", "/api/user/**", "/api/modvegilator").permitAll()
+                .authorizeRequests().antMatchers("/api/auth/**", "/api/category", "/api/recipes", "/api/recipes/**",  "/api/ingredients", "/api/categories").permitAll()
+                .antMatchers("/api/recipe/**", "/api/user/**", "/api/modvegilator",  "/api/ingredient/**", "/api/category/**").permitAll()
                 .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());

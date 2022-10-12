@@ -50,19 +50,16 @@ public class RecipeController {
 
     @PostMapping("/recipe")
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<Recipe> addRecipe(@RequestBody CreateRecipeDto recRequest, AuthentificationValidation authentificationValidation) {
-        try {
+    public ResponseEntity<String> addRecipe(@RequestBody CreateRecipeDto recRequest, AuthentificationValidation authentificationValidation) {
             var userId = authentificationValidation.getTokenId();
             if(userId != null) {
                 Recipe recipe = recipeService.createRecipe(recRequest, userId);
                 System.out.println("Recipe  3 ----->" + recipe);
-                return new ResponseEntity<>(recipe, HttpStatus.CREATED);
+                return new ResponseEntity<>("recette crée", HttpStatus.CREATED);
             }else{
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
     }
 
     @PutMapping("/recipes/update/{recId}")
@@ -101,6 +98,31 @@ public class RecipeController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/recipes/categories")
+    public ResponseEntity<Map<String, Object>> getCat(@RequestParam(defaultValue = "0") String category, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
+        try {
+            List<Recipe> recipes = new ArrayList<Recipe>();
+            Pageable paging = PageRequest.of(page, size);
+
+            Page<Recipe> r;
+            r = recipeRepository.findByCategory(category, paging);
+            recipes = r.getContent();
+
+            List<SimpleRecipeDto> recipeDtos= recipeService.getRecipes(recipes);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("recipes", recipeDtos);
+            response.put("currentPage", r.getNumber());
+            response.put("totalItems", r.getTotalElements());
+            response.put("totalPages", r.getTotalPages());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @DeleteMapping("/recipe/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")

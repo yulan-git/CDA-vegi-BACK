@@ -26,4 +26,5 @@ public class CreateRecipeDto {
     private CostEnum cost;
     List<String> steps = new ArrayList<>();
     Set<Category> categories;
+    Set<IngredientList> ingredients;
 }

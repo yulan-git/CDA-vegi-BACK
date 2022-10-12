@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @Service
 public class IngredientServiceImpl implements IngredientService {
@@ -14,8 +15,25 @@ public class IngredientServiceImpl implements IngredientService {
     IngredientRepository ingredientRepository;
 
     @Override
-    public List<Ingredient> getIngredients() {
+    public List<Ingredient> getIngredientsForUser() {
+        List<Ingredient> ingredients = ingredientRepository.findAll();
+        ingredients.removeIf(ingredient -> {
+            if(!ingredient.isAdded()){
+                return true;
+            }
+            return false;
+        });
+        return ingredients;
+    }
+
+    @Override
+    public List<Ingredient> getAllIngredients() {
         return ingredientRepository.findAll();
+    }
+
+    @Override
+    public Ingredient updateIngredient(Ingredient ingredient) {
+        return null;
     }
 
     @Override

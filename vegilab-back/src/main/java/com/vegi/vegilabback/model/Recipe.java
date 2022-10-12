@@ -87,11 +87,22 @@ public class Recipe implements Serializable {
 
     }
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
+    List<IngredientList> ingredientLists = new ArrayList<>();
+
 
     public void addCategory(Category cat) {
         this.categories.add(cat);
         cat.getRecipes().add(this);
     }
+
+
+/*    public void addIngredient(IngredientList ing) {
+        this.ingredientLists.add(ing);
+        ing.setRecipe(this);
+    }*/
+
+
 
     public Long getId() {
         return id;
@@ -211,5 +222,13 @@ public class Recipe implements Serializable {
 
     public void setLikes(Set<User> likes) {
         this.likes = likes;
+    }
+
+    public List<IngredientList> getIngredients() {
+        return ingredientLists;
+    }
+
+    public void setIngredients(List<IngredientList> ingredients) {
+        this.ingredientLists = ingredients;
     }
 }

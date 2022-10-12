@@ -1,6 +1,7 @@
 package com.vegi.vegilabback.service.impl;
 
 import com.vegi.vegilabback.model.Category;
+import com.vegi.vegilabback.model.Ingredient;
 import com.vegi.vegilabback.repository.CategoryRepository;
 import com.vegi.vegilabback.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +15,19 @@ public class CategoryServiceImpl implements CategoryService {
     CategoryRepository categoryRepository;
 
     @Override
-    public List<Category> getCategories() {
-        return categoryRepository.findAll();
+    public List<Category> getCategoriesForUser() {
+        List<Category> categories = categoryRepository.findAll();
+        categories.removeIf(category -> {
+            if(!category.isAdded()){
+                return true;
+            }
+            return false;
+        });
+        return categories;
     }
 
     @Override
-    public Category createCategory(Category category) {
-        Boolean cat = categoryRepository.existsByLabel(category.getLabel());
-        if(!cat == true){
-            category.setAdded(false);
-            categoryRepository.save(category);
-        }
-        return category;
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 }

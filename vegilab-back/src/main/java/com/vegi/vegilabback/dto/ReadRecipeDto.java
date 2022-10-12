@@ -1,6 +1,10 @@
 package com.vegi.vegilabback.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.vegi.vegilabback.model.Category;
+import com.vegi.vegilabback.model.Ingredient;
+import com.vegi.vegilabback.model.IngredientList;
 import com.vegi.vegilabback.model.enums.CostEnum;
 import com.vegi.vegilabback.model.enums.DifficultyEnum;
 import lombok.Data;
@@ -23,8 +27,10 @@ public class ReadRecipeDto {
     private int nbPerson;
     private DifficultyEnum difficulty;
     private CostEnum cost;
+    @JsonIncludeProperties("username")
     private UserDto user;
     List<String> steps = new ArrayList<>();
     Set<Category> categories;
+    Set<IngredientList> ingredients;
     Set<UserDto> likes;
 }

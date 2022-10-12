@@ -12,8 +12,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,8 +26,14 @@ public class RecipeServiceImpl implements RecipeService {
     UserRepository userRepository;
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    IngredientRepository ingredientRepository;
+    @Autowired
+    IngredientListRepository ingredientListRepository;
 
     ModelMapper mapper = new ModelMapper();
+    @Autowired
+    EntityManager entityManager;
 
     public RecipeServiceImpl(CategoryRepository categoryRepository, RecipeRepository recipeRepository, UserRepository userRepository) {
     }
@@ -64,7 +72,7 @@ public class RecipeServiceImpl implements RecipeService {
                 Optional<Category> _cat = categoryRepository.findById(catId);
                 recipe.addCategory(_cat.get());
             }
-            // Sinon on crée une nouvelle recette avec is Added à false
+            // Sinon on crée une nouvelle catégorie avec is Added à false
             else {
                 cat.setAdded(false);
                 categoryRepository.save(cat);
@@ -76,15 +84,31 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public Recipe createRecipe(CreateRecipeDto createRecipeDto, Long id) {
         var user =  userRepository.getReferenceById(id);
-        System.out.println("User --->"+ user);
-        var recipe = mapper.map(createRecipeDto, Recipe.class);
-        System.out.println("Recipe --->"+ recipe);
-        recipe.setStatus(StatusEnum.EN_ATTENTE);
-        recipe.setUser(user);
-        addOrCreateCatToRec(recipe);
-        System.out.println("Recipe  2 ----->" + recipe);
-        this.recipeRepository.save(recipe);
-        return recipe;
+        var newRecipe = mapper.map(createRecipeDto, Recipe.class);
+        addOrCreateIngredient(newRecipe);
+        newRecipe.setStatus(StatusEnum.EN_ATTENTE);
+        newRecipe.setUser(user);
+        addOrCreateCatToRec(newRecipe);
+        this.recipeRepository.save(newRecipe);
+        return newRecipe;
+    }
+
+    private void addOrCreateIngredient(Recipe newRecipe) {
+        // Liste vide
+        List<IngredientList> finaleIngredientList = new ArrayList<>();
+
+        //liste créée à partir  de la liste d'ingrédient dond l'id de l'ingrédient est null
+        newRecipe.getIngredients().removeIf(i->{
+            if(i.getIngredient().getId()==null){
+                finaleIngredientList.add(i);
+                ingredientRepository.save(i.getIngredient());
+                i.setRecipe(newRecipe);
+                return true;
+            }
+            i.setRecipe(newRecipe);
+            return false;
+        });
+        ingredientListRepository.saveAll(finaleIngredientList);
     }
 
     @Override
