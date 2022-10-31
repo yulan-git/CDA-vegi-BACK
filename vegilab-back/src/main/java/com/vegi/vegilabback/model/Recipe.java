@@ -19,6 +19,7 @@ import java.util.*;
 @Slf4j
 @Entity
 @Table(name = "recipes")
+@Builder
 public class Recipe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +39,7 @@ public class Recipe implements Serializable {
     private int prepareTime;
 
     @JsonFormat(pattern="dd-MM-yyyy")
-    private Date publishDate;
+    private LocalDate publishDate;
 
     private int nbPerson;
 
@@ -54,10 +55,6 @@ public class Recipe implements Serializable {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-
-/*    @OneToMany(mappedBy = "recipe")
-    @JsonIgnore
-    Set<Preparation> preparations;*/
 
 /*    @OneToMany(mappedBy = "recipe")
     @JsonIgnore
@@ -96,13 +93,16 @@ public class Recipe implements Serializable {
         cat.getRecipes().add(this);
     }
 
-
-/*    public void addIngredient(IngredientList ing) {
+    public void addIngredientList(IngredientList ing) {
         this.ingredientLists.add(ing);
         ing.setRecipe(this);
-    }*/
+    }
 
-
+    public void removeIngredientList(Long ingId) {
+        this.ingredientLists.stream().filter(i -> i.getId() == ingId)
+                .findFirst()
+                .ifPresent(ing -> this.ingredientLists.remove(ing));
+    }
 
     public Long getId() {
         return id;
@@ -152,11 +152,11 @@ public class Recipe implements Serializable {
         this.prepareTime = prepareTime;
     }
 
-    public Date getPublishDate() {
+    public LocalDate getPublishDate() {
         return publishDate;
     }
 
-    public void setPublishDate(Date publishDate) {
+    public void setPublishDate(LocalDate publishDate) {
         this.publishDate = publishDate;
     }
 

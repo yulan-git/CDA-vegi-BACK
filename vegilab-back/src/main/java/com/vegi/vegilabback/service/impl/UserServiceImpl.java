@@ -56,7 +56,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(Long id) {
         List<RefreshToken> refreshTokens = refreshTokenRepository.findAll();
-        System.out.println(("TOKEN ------->" + refreshTokens));
         Optional<User> user = userRepository.findById(id);
         if(refreshTokens != null) {
             for (var token : refreshTokens) {
@@ -65,7 +64,6 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
-        System.out.println("USER -----------> ");
         if (user.isPresent()){
             userRepository.delete(user.get());
         }

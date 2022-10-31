@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vegi.vegilabback.model.*;
 import com.vegi.vegilabback.model.enums.CostEnum;
 import com.vegi.vegilabback.model.enums.DifficultyEnum;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +16,8 @@ import java.util.Set;
 
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateRecipeDto {
     private String name;
     private String description;

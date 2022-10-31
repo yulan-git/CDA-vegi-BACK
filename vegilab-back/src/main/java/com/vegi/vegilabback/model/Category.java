@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Builder
+@AllArgsConstructor
 public class Category implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -27,10 +29,6 @@ public class Category implements Serializable {
     
     @NotNull
     private boolean isAdded;
-
-/*  @ManyToMany(mappedBy = "categories")
-    @JsonIgnore
-    Set<Recipe> belongs;*/
 
     @ManyToMany(fetch = FetchType.LAZY,
             mappedBy = "categories")

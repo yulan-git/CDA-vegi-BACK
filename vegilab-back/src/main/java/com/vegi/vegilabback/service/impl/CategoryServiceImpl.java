@@ -1,5 +1,6 @@
 package com.vegi.vegilabback.service.impl;
 
+import com.vegi.vegilabback.exception.exceptions.ResourceNotFoundException;
 import com.vegi.vegilabback.model.Category;
 import com.vegi.vegilabback.model.Ingredient;
 import com.vegi.vegilabback.repository.CategoryRepository;
@@ -29,5 +30,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
+    }
+
+
+    @Override
+    public Category getById(Long id) {
+        var category = categoryRepository
+                .findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Not found ingredient with Id"+ id));
+        return category;
     }
 }

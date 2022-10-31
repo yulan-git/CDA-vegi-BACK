@@ -1,6 +1,7 @@
 package com.vegi.vegilabback.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vegi.vegilabback.model.enums.RoleEnum;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,6 +17,9 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +55,10 @@ public class User {
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "recipe_id") })
     private Set<Recipe> liked = new HashSet<>();
+
+    public User(String username) {
+    }
+
 
     public void addRecipe(Recipe recipe) {
         this.liked.add(recipe);

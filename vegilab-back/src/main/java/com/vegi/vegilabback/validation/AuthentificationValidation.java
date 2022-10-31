@@ -1,17 +1,27 @@
 package com.vegi.vegilabback.validation;
 
+import com.vegi.vegilabback.dto.UserDto;
+import com.vegi.vegilabback.model.User;
+import com.vegi.vegilabback.model.enums.RoleEnum;
+import com.vegi.vegilabback.repository.UserRepository;
 import com.vegi.vegilabback.security.services.UserDetailsImpl;
+import com.vegi.vegilabback.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Component
 public class AuthentificationValidation {
+
+    @Autowired
+    private UserRepository userRepository;
 
     private String adminSecret;
     @Autowired
@@ -40,6 +50,11 @@ public class AuthentificationValidation {
     public UserDetailsImpl getUserDetails(){
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         return userDetails;
+    }
+    public boolean isUser(){
+        UserDetailsImpl userDetails = getUserDetails();
+        User user = userRepository.findByEmail(userDetails.getEmail());
+        return user.getRole().getName().equals(RoleEnum.USER);
     }
 
     public Long getTokenId(){

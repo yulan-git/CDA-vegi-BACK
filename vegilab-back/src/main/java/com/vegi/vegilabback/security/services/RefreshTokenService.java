@@ -1,6 +1,6 @@
 package com.vegi.vegilabback.security.services;
 
-import com.vegi.vegilabback.exception.TokenRefreshException;
+import com.vegi.vegilabback.exception.exceptions.TokenRefreshException;
 import com.vegi.vegilabback.model.RefreshToken;
 import com.vegi.vegilabback.repository.RefreshTokenRepository;
 import com.vegi.vegilabback.repository.UserRepository;

@@ -3,7 +3,7 @@ package com.vegi.vegilabback.controller;
 import com.vegi.vegilabback.dto.PasswordDto;
 import com.vegi.vegilabback.dto.UserDto;
 import com.vegi.vegilabback.dto.UserDtoForList;
-import com.vegi.vegilabback.exception.UserNotFoundException;
+import com.vegi.vegilabback.exception.exceptions.UserNotFoundException;
 import com.vegi.vegilabback.model.PasswordResetToken;
 import com.vegi.vegilabback.model.User;
 import com.vegi.vegilabback.repository.PasswordTokenRepository;
@@ -28,10 +28,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-@Repository
-@Getter
-@Setter
+@RestController
 @RequestMapping("api")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class UserController {
     @Autowired
     UserService userService;

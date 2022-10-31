@@ -6,17 +6,16 @@ import com.vegi.vegilabback.model.enums.StatusEnum;
 import com.vegi.vegilabback.repository.*;
 import com.vegi.vegilabback.service.RecipeService;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 public class RecipeServiceImpl implements RecipeService {
@@ -32,11 +31,6 @@ public class RecipeServiceImpl implements RecipeService {
     IngredientListRepository ingredientListRepository;
 
     ModelMapper mapper = new ModelMapper();
-    @Autowired
-    EntityManager entityManager;
-
-    public RecipeServiceImpl(CategoryRepository categoryRepository, RecipeRepository recipeRepository, UserRepository userRepository) {
-    }
 
     @Override
     public List<SimpleRecipeDto> getRecipes(List<Recipe> recipeList) {
@@ -45,6 +39,7 @@ public class RecipeServiceImpl implements RecipeService {
             SimpleRecipeDto simpleRecipeDto = mapper.map(recipe, SimpleRecipeDto.class);
             recipes.add(simpleRecipeDto);
         }
+        recipes.removeIf(recipe-> recipe.getStatus() != StatusEnum.PUBLIEE);
         return recipes;
     }
 
@@ -56,6 +51,19 @@ public class RecipeServiceImpl implements RecipeService {
             return readRecipeDto;
         }
         return null;
+    }
+
+    @Override
+    public Recipe createRecipe(CreateRecipeDto createRecipeDto, Long id) {
+        var user =  userRepository.getReferenceById(id);
+        var newRecipe = mapper.map(createRecipeDto, Recipe.class);
+        addOrCreateIngredientList(newRecipe);
+        newRecipe.setPublishDate(LocalDate.now());
+        newRecipe.setStatus(StatusEnum.EN_ATTENTE);
+        newRecipe.setUser(user);
+        addOrCreateCatToRec(newRecipe);
+        this.recipeRepository.save(newRecipe);
+        return newRecipe;
     }
 
     public void addOrCreateCatToRec(Recipe recipe) {
@@ -81,40 +89,24 @@ public class RecipeServiceImpl implements RecipeService {
         }
     }
 
-    @Override
-    public Recipe createRecipe(CreateRecipeDto createRecipeDto, Long id) {
-        var user =  userRepository.getReferenceById(id);
-        var newRecipe = mapper.map(createRecipeDto, Recipe.class);
-        addOrCreateIngredient(newRecipe);
-        newRecipe.setStatus(StatusEnum.EN_ATTENTE);
-        newRecipe.setUser(user);
-        addOrCreateCatToRec(newRecipe);
-        this.recipeRepository.save(newRecipe);
-        return newRecipe;
-    }
-
-    private void addOrCreateIngredient(Recipe newRecipe) {
-        // Liste vide
-        List<IngredientList> finaleIngredientList = new ArrayList<>();
+    private void addOrCreateIngredientList(Recipe recipe){
+        // Copie la liste de recette
+        List<IngredientList> ingredientLists = recipe.getIngredients();
 
         //liste créée à partir  de la liste d'ingrédient dond l'id de l'ingrédient est null
-        newRecipe.getIngredients().removeIf(i->{
-            if(i.getIngredient().getId()==null){
-                finaleIngredientList.add(i);
-                ingredientRepository.save(i.getIngredient());
-                i.setRecipe(newRecipe);
+        recipe.setIngredients(new ArrayList<>());
+        ingredientLists.removeIf(i->{
+            if(i.getId()!=null){
                 return true;
             }
-            i.setRecipe(newRecipe);
+            recipe.addIngredientList(i);
             return false;
         });
-        ingredientListRepository.saveAll(finaleIngredientList);
     }
 
     @Override
     public void deleteAllRecipesFromUser(@NonNull Long id) {
         List<Recipe> recipes = recipeRepository.findAllByUser(id);
-
         for (var recipe: recipes) {
             if(recipe !=null){
             recipeRepository.deleteAll(recipes);
@@ -145,14 +137,6 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Recipe> findRecipeById(List<Long> recipes) {
-        for (var r:recipes) {
-            System.out.println("rec ----->"+ r);
-        }
-        return null;
-    }
-
-    @Override
     public Set<Recipe> getUserFavorites(Long id) {
         Optional<User> user = userRepository.findById(id);
         Set<Recipe> recipeList = user.get().getLiked();
@@ -169,12 +153,11 @@ public class RecipeServiceImpl implements RecipeService {
             recipe.setUser(user);
             recipe.setStatus(StatusEnum.EN_ATTENTE);
             addOrCreateCatToRec(recipe);
+            addOrCreateIngredientList(recipe);
             recipeRepository.save(recipe);
             return recipe;
         }
         return null;
     }
-
-
 
 }

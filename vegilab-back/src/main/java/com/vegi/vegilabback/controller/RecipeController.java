@@ -22,8 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@Getter
-@Setter
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 @RequestMapping("api")
 public class RecipeController {
     @Autowired
@@ -34,8 +33,7 @@ public class RecipeController {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
+
 
     @Value("${vegilab.app.adminSecretName}")
     private String adminSecretName;
@@ -52,13 +50,8 @@ public class RecipeController {
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<String> addRecipe(@RequestBody CreateRecipeDto recRequest, AuthentificationValidation authentificationValidation) {
             var userId = authentificationValidation.getTokenId();
-            if(userId != null) {
                 Recipe recipe = recipeService.createRecipe(recRequest, userId);
-                System.out.println("Recipe  3 ----->" + recipe);
                 return new ResponseEntity<>("recette crée", HttpStatus.CREATED);
-            }else{
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
 
     }
 
@@ -127,6 +120,7 @@ public class RecipeController {
     @DeleteMapping("/recipe/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     public ResponseEntity deleteRecipe(@PathVariable ("id") Long id, AuthentificationValidation authentificationValidation){
+        System.out.println(authentificationValidation.getUserDetails().getUsername());
         Recipe recipe = recipeRepository.getById(id);
         if(authentificationValidation.getTokenUsername().equals(adminSecretName) || authentificationValidation.getTokenId().equals(recipe.getUser().getId())) {
             recipeService.deleteRecipeById(id);
@@ -164,32 +158,35 @@ public class RecipeController {
     }
 
 
-    @GetMapping("/recipe/user/{id}")
+    @GetMapping("/recipe/user/{username}")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR')") //faire liste de moderateur
-    public ResponseEntity<Map<String, Object>> getByUser(@PathVariable Long id, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, AuthentificationValidation authentificationValidation) {
+    public ResponseEntity<Map<String, Object>> getByUser(@PathVariable String username, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, AuthentificationValidation authentificationValidation) {
         try {
-            if(authentificationValidation.getTokenId() == id ){
-            List<Recipe> recipes = new ArrayList<Recipe>();
-            Pageable paging = PageRequest.of(page, size);
+            if(authentificationValidation.getTokenUsername().equals(username)){
+                List<Recipe> recipes = new ArrayList<Recipe>();
+                Pageable paging = PageRequest.of(page, size);
+                Long id = authentificationValidation.getTokenId();
 
-            Page<Recipe> r;
-            r = recipeRepository.findByUserId(id, paging);
-            recipes = r.getContent();
+                Page<Recipe> r;
+                r = recipeRepository.findByUserId(id, paging);
+                Map<String, Object> response = new HashMap<>();
+                recipes = r.getContent();
 
-            List<SimpleRecipeDto> recipeDtos= new ArrayList<>();
+                List<SimpleRecipeDto> recipeDtos= new ArrayList<>();
 
-            for (var recipe: recipes) {
-                SimpleRecipeDto simpleRecipeDto = mapper.map(recipe, SimpleRecipeDto.class);
-                recipeDtos.add(simpleRecipeDto);
-            }
+                for (var recipe: recipes) {
+                    if(recipe!=null){
+                        SimpleRecipeDto simpleRecipeDto = mapper.map(recipe, SimpleRecipeDto.class);
+                        recipeDtos.add(simpleRecipeDto);
+                    }
+                }
+                System.out.println("SIZE --------->"+ recipeDtos.size());
+                    response.put("recipes", recipeDtos);
+                    response.put("currentPage", r.getNumber());
+                    response.put("totalItems", r.getTotalElements());
+                    response.put("totalPages", r.getTotalPages());
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("recipes", recipeDtos);
-            response.put("currentPage", r.getNumber());
-            response.put("totalItems", r.getTotalElements());
-            response.put("totalPages", r.getTotalPages());
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
+                    return new ResponseEntity<>(response, HttpStatus.OK);
             }else{
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }

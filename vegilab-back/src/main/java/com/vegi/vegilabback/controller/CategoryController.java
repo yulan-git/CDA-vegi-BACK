@@ -1,6 +1,6 @@
 package com.vegi.vegilabback.controller;
 
-import com.vegi.vegilabback.exception.ResourceNotFoundException;
+import com.vegi.vegilabback.exception.exceptions.ResourceNotFoundException;
 import com.vegi.vegilabback.model.Category;
 import com.vegi.vegilabback.model.Ingredient;
 import com.vegi.vegilabback.repository.CategoryRepository;
@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Repository
-@Getter
-@Setter
+@RestController
 @RequestMapping("api")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class CategoryController {
     @Autowired
     CategoryService categoryService;
@@ -38,6 +37,16 @@ public class CategoryController {
     public ResponseEntity<List<Category>> getCategoriesForUser() {
         List<Category> categories = categoryService.getCategoriesForUser();
         return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping("/categories/{id}")
+    public ResponseEntity<Category> getOneCategory(@PathVariable Long id){
+        if(id != null || id != 0L){
+            Category category = categoryService.getById(id);
+            return new ResponseEntity<>(category, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/category/all")

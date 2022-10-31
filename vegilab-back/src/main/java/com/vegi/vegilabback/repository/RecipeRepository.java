@@ -17,16 +17,15 @@ import java.util.List;
 
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+    Page<Recipe> findAll(Pageable pageable);
+    Recipe getById(Long id);
+
     @Query(value = "SELECT *\n" +
             "            FROM vegi.recipes \n" +
             "            LEFT JOIN vegi.recipe_category ON vegi.recipes.id = vegi.recipe_category.recipe_id \n" +
             "            LEFT JOIN vegi.category ON vegi.category.id = vegi.recipe_category.category_id \n" +
             "            WHERE vegi.category.label=?1", nativeQuery = true)
     Page<Recipe> findByCategory(String category, Pageable paging);
-
-    Page<Recipe> findAll(Pageable pageable);
-    Recipe getById(Long id);
-    Page<Recipe> findByName(String name, Pageable paging);
 
     @Query(value = "SELECT * "+
             "FROM vegi.recipe_category " +

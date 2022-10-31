@@ -11,5 +11,6 @@ public class DevCorsConfiguration implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .exposedHeaders("Authorization");
+
     }
 }

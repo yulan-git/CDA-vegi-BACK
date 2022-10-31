@@ -15,10 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class Generator implements CommandLineRunner {
@@ -54,7 +51,8 @@ public class Generator implements CommandLineRunner {
         Any ingrAny = any.get("aliments");
         ingrAny.forEach(a -> {
             Ingredient ingredient = new Ingredient();
-            ingredient.setLabel(a.get("label").toString());
+            var label = a.get("label").toString().substring(0, 1).toUpperCase() + a.get("label").toString().substring(1).toLowerCase();
+            ingredient.setLabel(label);
             ingredient.setAdded(true);
             this.ingredientRepository.save(ingredient);
         });

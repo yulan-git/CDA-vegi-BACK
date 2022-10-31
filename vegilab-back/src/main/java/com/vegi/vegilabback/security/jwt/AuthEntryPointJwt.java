@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,10 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
         logger.error("Unauthorized error: {}", authException.getMessage());
-
+        System.out.println("REQUEST ---->" + request);
+        System.out.println(Arrays.toString(request.getCookies()));
+        System.out.println(request.getCookies());
+        System.out.println("RESPONSE ---->" + response);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
@@ -37,7 +41,6 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), body);
 
-//    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
     }
 
 }

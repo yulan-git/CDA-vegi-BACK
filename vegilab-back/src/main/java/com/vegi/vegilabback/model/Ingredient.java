@@ -3,6 +3,7 @@ package com.vegi.vegilabback.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class Ingredient {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -31,7 +33,4 @@ public class Ingredient {
     @JsonIgnore
     Set<IngredientList> ingredientLists = new HashSet<>();
 
-/*    @OneToMany(mappedBy = "ingredient")
-    @JsonIgnore
-    Set<Preparation> preparations;*/
 }

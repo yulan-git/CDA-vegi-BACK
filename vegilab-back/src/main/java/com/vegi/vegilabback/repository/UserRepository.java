@@ -13,8 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
     @Query(value = "SELECT * FROM vegi.users WHERE vegi.users.email = ?1", nativeQuery = true)
-    public User findByEmail(String email);
-
-    public User findByResetPasswordToken(String token);
+    User findByEmail(String email);
+    User findByResetPasswordToken(String token);
 
 }

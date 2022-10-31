@@ -19,6 +19,5 @@ public interface RecipeService {
     void deleteRecipeById(Long id);
     void addRecipeToFavorite(RecipeWithFavoritesDto recipe, Long userId);
     Recipe updateStatus(Long recId, StatusEnum status);
-    List<Recipe> findRecipeById(List<Long> recipes);
     Set<Recipe> getUserFavorites(Long id);
 }

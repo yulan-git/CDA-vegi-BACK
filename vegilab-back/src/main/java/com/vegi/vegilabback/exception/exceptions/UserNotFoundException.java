@@ -1,4 +1,4 @@
-package com.vegi.vegilabback.exception;
+package com.vegi.vegilabback.exception.exceptions;
 
 public class UserNotFoundException extends RuntimeException{
     private static final long serialVersionUID = 1L;

@@ -7,13 +7,13 @@ public enum UnitEnum {
     CAFE("cuillère(s) à café"),
     SOUPE("cuillère(s) à soupe"),
     POIGNEE("poignée(s)"),
-    GOUTTE("goutte"),
+    GOUTTE("goutte(s)"),
     GRAMME("g"),
     KILO("Kg"),
     LITRE("L"),
     CENTILITRE("cL"),
     MILLILITRE("mL"),
-    MORCEAU("morceau");
+    MORCEAU("morceau(x)");
 
     public final String unit;
 

@@ -2,7 +2,7 @@ package com.vegi.vegilabback.advice;
 
 import java.util.Date;
 
-import com.vegi.vegilabback.exception.TokenRefreshException;
+import com.vegi.vegilabback.exception.exceptions.TokenRefreshException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

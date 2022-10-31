@@ -14,13 +14,9 @@ import java.util.stream.Stream;
 
 @Repository
 public interface PasswordTokenRepository extends JpaRepository<PasswordResetToken, Long> {
-    //@Query(value = "SELECT * FROM vegi.PasswordResetToken WHERE vegi.PasswordResetToken.token = ?1", nativeQuery = true)
     Optional<PasswordResetToken> findByToken(String token);
-
     Optional<PasswordResetToken> findByUser(User user);
-
     Stream<PasswordResetToken> findAllByExpiryDateLessThan(Date now);
-
     void deleteByExpiryDateLessThan(Date now);
 
     @Modifying

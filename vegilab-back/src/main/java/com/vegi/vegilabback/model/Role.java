@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "roles")
+@Builder
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +24,9 @@ public class Role {
 
     public Role(RoleEnum name) {
         this.name = name;
+    }
+
+    public Role(int i, RoleEnum user) {
     }
 
     public Integer getId() {

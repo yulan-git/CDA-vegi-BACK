@@ -16,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 //@EnableWebSecurity
@@ -36,11 +35,6 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
         return new AuthTokenFilter();
     }
 
-//	@Override
-//	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-//		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-//	}
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -50,12 +44,6 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
 
         return authProvider;
     }
-
-//	@Bean
-//	@Override
-//	public AuthenticationManager authenticationManagerBean() throws Exception {
-//		return super.authenticationManagerBean();
-//	}
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
@@ -72,16 +60,29 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**", "/api/category", "/api/recipes", "/api/recipes/**",  "/api/ingredients", "/api/categories").permitAll()
-                .antMatchers("/api/recipe/**", "/api/user/**", "/api/modvegilator",  "/api/ingredient/**", "/api/category/**").permitAll()
+                .authorizeRequests().antMatchers(
+                        "/api/auth/**",
+                        "/api/category",
+                        "/api/recipes",
+                        "/api/recipes/**",
+                        "/api/ingredients",
+                        "/api/ingredients/**",
+                        "/api/categories").permitAll()
+                .antMatchers(
+                        "/api/recipe/**",
+                        "/api/user/**",
+                        "/api/modvegilator",
+                        "/api/ingredient/**",
+                        "/api/category/**",
+                        "/api/signout",
+                        "/api/ingredient-list",
+                        "/api/ingredient-list/**").permitAll()
                 .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-       /* http.csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());*/
         return http.build();
     }
 }
